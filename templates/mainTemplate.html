@@ -1,0 +1,106 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="no-js" dir="rtl" lang="fa-IR">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock title %}|تاپ لرن</title>
+    {% include 'Partials/meta_tags.html' %}
+    {% include 'Partials/styles.html' %}
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+</head>
+<body>
+<script src="{% static 'js/modernizr-custom.js' %}"></script>
+
+<div class="landing-layer">
+    <div class="container">
+        <nav>
+            <div class="row">
+                <div class="col-sm-6 col-xs-12">
+                    <ul>
+                        <li>
+                            <a href=""> همکاری در فروش </a>
+                            <a href=""> درباره ما </a>
+                            <a href=""> تماس با ما </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <div class="clientarea">
+                        {% if user.is_authenticated %}
+                        <div class="loggein ">
+                            <i class="zmdi zmdi-account"></i><a href=""> {{ user.username }}  خوش آمدی </a>/
+                            <a href="{% url 'accounts:Logout'%}"> خروج </a>
+                        </div>
+                        {% else %}
+                        <div class="signin">
+                            <i class="zmdi zmdi-account"></i>
+                            <a href="{% url 'accounts:Login' %}"> ورود </a> /
+                            <a href="{% url 'accounts:Register' %}"> عضویت </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </nav>
+        {% block search_box %}
+        {% endblock search_box %}
+    </div>
+</div>
+
+<!-- main manu -->
+<div class="main-menu">
+    <div class="container">
+        <nav>
+            <span class="responsive-sign"><i class="zmdi zmdi-menu"></i></span>
+            <ul>
+                <li><a href=""> برنامه نویسی موبایل </a>
+                    <ul>
+                        <li><a href=""> زامارین Xamarin </a></li>
+                        <li><a href=""> react Native </a></li>
+                    </ul>
+                </li>
+                <li><a href=""> برنامه نویسی وب </a>
+                    <ul>
+                        <li><a href=""> Asp.net WebForms </a></li>
+                        <li><a href=""> Asp.net MVC </a></li>
+                        <li><a href=""> PHP MVC </a></li>
+                        <li><a href=""> PHP FrameWorks </a></li>
+                        <li><a href=""> Asp.net Core </a></li>
+                    </ul>
+                </li>
+                <li><a href=""> برنامه نویسی تحت ویندوز </a></li>
+                <li><a href=""> طراحی سایت </a>
+                    <ul>
+                        <li><a href=""> طراحی سایت </a></li>
+                        <li><a href=""> Bootstrap </a></li>
+                        <li><a href=""> Angular </a></li>
+                        <li><a href=""> react </a></li>
+                        <li><a href=""> Jquery </a></li>
+                    </ul>
+                </li>
+                <li><a href=""> بانک های اطلاعاتی </a></li>
+                <li><a href=""> سئو </a></li>
+                <li><a href=""> سیستم عامل </a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<!-- /main manu -->
+{% include "Partials/messages.html" %}
+<!-- content -->
+{% block content %}
+{% endblock content %}
+<!-- /content -->
+
+<!-- footer -->
+{% include 'Partials/footer.html' %}
+<!-- /footer -->
+
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/script.js' %}"></script>
+<script src="{% static 'js/jquery.validate.min.js' %}"></script>
+<script src="{% static 'js/jquery.validate.unobtrusive.js' %}"></script>
+
+</body>
+</html>

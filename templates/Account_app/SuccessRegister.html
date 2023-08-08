@@ -1,0 +1,23 @@
+{% extends "mainTemplate.html" %}
+
+{% block title %}
+    پایان ثبت نام
+{% endblock title %}
+
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">تاپ لرن</a></li>
+            <li class="breadcrumb-item active" aria-current="page">پایان ثبت نام</li>
+        </ul>
+    </nav>
+</div>
+
+<div class="alert alert-success">
+    <h2 > {{ user.username }} عزیز!</h2>
+    <p>  ثبت نام شما با موفقیت انجام شد ,ایمیلی حاوی لینک فعالسازی به ایمیل {{ user.email }}ارسال شد. </p>
+    <p>جهت ادامه ثبت نام وارد ایمیل خود شوید و روی لینک کلیک کنید.</p>
+</div>
+{% endblock %}

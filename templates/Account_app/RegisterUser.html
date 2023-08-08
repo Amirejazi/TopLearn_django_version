@@ -1,0 +1,60 @@
+{% extends "mainTemplate.html" %}
+
+{% block title %}
+    ثبت نام
+{% endblock title %}
+
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">تاپ لرن</a></li>
+            <li class="breadcrumb-item active" aria-current="page">عضویت در سایت</li>
+        </ul>
+    </nav>
+</div>
+
+<main class="client-page">
+    <div class="container-content">
+
+        <header><h2> عضویت در سایت </h2></header>
+
+        <div class="form-layer">
+
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="input-group">
+                    <span class="input-group-addon" id="username"><i class="zmdi zmdi-account"></i></span>
+                    {{ form.username }}
+                </div>
+                {{ form.errors.username }}
+                <div class="input-group">
+                    <span class="input-group-addon" id="email-address"><i class="zmdi zmdi-email"></i></span>
+                    {{ form.email }}
+                </div>
+                {{ form.errors.email }}
+
+                <div class="input-group">
+                    <span class="input-group-addon" id="password"><i class="zmdi zmdi-lock"></i></span>
+                    {{ form.password }}
+                </div>
+                {{ form.errors.password }}
+                <div class="input-group">
+                    <span class="input-group-addon" id="password"><i class="zmdi zmdi-lock"></i></span>
+                    {{ form.rePassword }}
+                </div>
+                {{ form.errors.rePassword }}
+                <div class="link">
+                    <a href="{% url 'accounts:Login' %}"> <i class="zmdi zmdi-account"></i> ورود به سایت </a>
+                </div>
+
+                <input type="submit" class="btn btn-success" value="ثبت نام">
+
+            </form>
+        </div>
+
+    </div>
+</main>
+
+{% endblock %}
