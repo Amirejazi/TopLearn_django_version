@@ -35,6 +35,23 @@ class UserRegisterForm(ModelForm):
 
 
 class UserLoginForm(forms.Form):
-    email = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ایمیل', 'aria-describedby': "email-address"}))
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'ایمیل', 'aria-describedby': "email-address"}))
     password = forms.CharField(label='رمز عبور', widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'رمز عبور', 'aria-describedby': "email-address" }))
-    remember_me = forms.BooleanField()
+    remember_me = forms.BooleanField(required=False, widget=forms.CheckboxInput())
+
+
+class ForgotPasswordForm(forms.ModelForm):
+    email = forms.EmailField(widget=forms.EmailInput(
+        attrs={'class': 'form-control', 'placeholder': 'ایمیل', 'aria-describedby': "email-address"}))
+
+    class Meta:
+        model = User
+        fields = ['email']
+
+
+class ResetPasswordForm(forms.Form):
+    active_code = forms.CharField(widget=forms.HiddenInput())
+    password = forms.CharField(widget=forms.PasswordInput(
+        attrs={'class': 'form-control', 'placeholder': 'رمز عبور', 'aria-describedby': 'password'}))
+    rePassword = forms.CharField(widget=forms.PasswordInput(
+        attrs={'class': 'form-control', 'placeholder': 'تکرار رمز عبور', 'aria-describedby': 'Repassword'}))
