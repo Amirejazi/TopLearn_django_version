@@ -1,0 +1,75 @@
+{% extends "mainTemplate.html" %}
+{% load humanize %}
+
+{% block title %}
+    کیف پول شما
+{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">تاپ لرن</a></li>
+                <li class="breadcrumb-item active" aria-current="page">کیف پول {{ user.username }}</li>
+            </ul>
+        </nav>
+    </div>
+
+    <main>
+        <div class="container">
+            <div class="user-account">
+                <div class="row">
+                    <div class="col-md-3 col-sm-4 col-xs-12">
+                        {% include 'Partials/sidebar.html' %}
+                    </div>
+                    <div class="col-md-9 col-sm-8 col-xs-12">
+                        <section class="user-account-content">
+                            <header><h1> کیف پول شما </h1></header>
+                            <div class="inner form-layer">
+
+                                <form action="{% url 'userpanel:Wallet' %}" method="post">
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        <div class="col-md-7 col-sm-8 col-xs-12">
+                                            <div class="input-group">
+                                                <span class="input-group-addon" id="password"><i
+                                                        class="zmdi zmdi-balance-wallet"></i></span>
+                                                {{ form.amount }}
+                                            </div>
+                                        </div>
+
+                                        {{ form.errors.amount }}
+                                        <div class="col-md-7 col-sm-8 col-xs-12">
+                                            <button class="btn btn-success">شارژ کیف پول</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <hr/>
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <th>مبلغ</th>
+                                        <th>نوع تراکنش</th>
+                                        <th>تاریخ</th>
+                                        <th>شرح</th>
+
+                                    </tr>
+
+                                    {% for wallet in user.get_wallets_user %}
+                                        <tr>
+                                            <th>{{ wallet.amount | intcomma }} تومان </th>
+                                            <th class="text-danger">{{ wallet.type__type_id }}</th>
+                                            <th>{{ wallet.get_created_date_shamsi }}</th>
+                                            <th>{{ wallet.description }}</th>
+
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
+

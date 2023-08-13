@@ -1,0 +1,27 @@
+{% extends "mainTemplate.html" %}
+
+{% block title %}
+    نتیجه پرداخت
+{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">تاپ لرن</a></li>
+                <li class="breadcrumb-item active" aria-current="page">نتیجه پرداخت</li>
+            </ul>
+        </nav>
+    </div>
+
+    {% if RefID %}
+    <div class="alert alert-success">
+        <p>پرداخت با موفقیت انجام شد</p>
+        <p>کد پیگیری:{{ RefID }}</p>
+    </div>
+    {% else %}
+    <div class="alert alert-danger">
+        <p>عملیات ناموفق بود!!</p>
+    </div>
+    {% endif %}
+{% endblock %}

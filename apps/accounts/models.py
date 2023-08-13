@@ -2,6 +2,7 @@ from uuid import uuid4
 
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.db.models import Q, Sum
 from django.utils import timezone
 import jdatetime
 import os
@@ -82,3 +83,18 @@ class User(AbstractBaseUser, PermissionsMixin):
             if os.path.exists(image_path):
                 os.remove(image_path)
         self.image_name = image
+
+    def get_wallets_user(self):
+        return self.wallets_of_user.filter(is_pay=True)
+
+    def balance_wallet(self):
+        enter = self.wallets_of_user.filter(Q(type__type_id=1) & Q(is_pay=True)).aggregate(Sum('amount'))['amount__sum']
+        if enter is None:
+            enter = 0
+        exit = self.wallets_of_user.filter(Q(type__type_id=2) & Q(is_pay=True)).aggregate(Sum('amount'))['amount__sum']
+        if exit is None:
+            exit = 0
+
+        return (enter - exit)
+
+

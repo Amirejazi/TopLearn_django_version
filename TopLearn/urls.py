@@ -8,5 +8,6 @@ urlpatterns = [
     path('', include('apps.home.urls')),
     path('account/', include('apps.accounts.urls', namespace='accounts')),
     path('userpanel/', include('apps.userpanel.urls', namespace='userpanel')),
+    path('payment/', include('apps.payment.urls', namespace='payment')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

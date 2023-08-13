@@ -35,8 +35,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'apps.accounts.apps.AccountsConfig',
     'apps.userpanel.apps.UserpanelConfig',
+    'apps.payment.apps.PaymentConfig',
 ]
 
 MIDDLEWARE = [
@@ -138,3 +140,5 @@ EMAIL_HOST_PASSWORD = 'mbzmsdiorbqshzgx'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
+
+SANDBOX = True
