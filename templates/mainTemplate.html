@@ -29,7 +29,7 @@
                     <div class="clientarea">
                         {% if user.is_authenticated %}
                         <div class="loggein ">
-                            <i class="zmdi zmdi-account"></i><a href=""> {{ user.username }}  خوش آمدی </a>/
+                            <i class="zmdi zmdi-account"></i><a href="{% url 'userpanel:UserPanelInformation' %}"> {{ user.username }}  خوش آمدی </a>/
                             <a href="{% url 'accounts:Logout'%}"> خروج </a>
                         </div>
                         {% else %}

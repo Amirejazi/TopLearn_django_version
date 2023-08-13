@@ -1,0 +1,35 @@
+<aside>
+
+    <div class="avatar-layer">
+        <div class="img-layer">
+            <a href="" class="change-image"><i class="zmdi zmdi-edit"></i></a>
+            {% if user.image_name %}
+                <img src="{{ media_url }}{{ user.image_name }}"
+                     class="thumbnail" style="max-width:150px">
+            {% else %}
+                <img src="{{ media_url }}images/UserAvatar/Default.jpg" class="thumbnail"
+                     style="max-width:150px">
+            {% endif %}
+
+        </div>
+        <div class="detail">
+            <span style="font-family: Helvetica;"> {{ user.username }} </span>
+            <span> عضویت : {{ user.get_register_date_shamsi }}</span>
+        </div>
+    </div>
+
+    <section>
+        <header><h3> میز کار </h3></header>
+        <div class="inner">
+            <ul>
+                <li><a href="{% url 'userpanel:UserPanelInformation' %}"> مشاهده حساب کابری </a></li>
+                <li><a href="{% url 'userpanel:EditProfile' %}"> ویرایش حساب کابری </a></li>
+                <li><a href="/UserPanel/ChangePassword"> تغییر رمز عبور </a></li>
+                <li><a href="/UserPanel/Wallet"> کیف پول شما </a></li>
+                <li><a href=""> تنظیمات حساب کاربری </a></li>
+                <li><a href="{% url 'accounts:Logout' %}"> خروج از حساب کاربری </a>
+                </li>
+            </ul>
+        </div>
+    </section>
+</aside>

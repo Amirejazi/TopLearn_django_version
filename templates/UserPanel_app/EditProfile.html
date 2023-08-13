@@ -1,0 +1,74 @@
+{% extends "mainTemplate.html" %}
+
+{% block title %}
+    ویرایش پروفایل
+{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">تاپ لرن</a></li>
+                <li class="breadcrumb-item active" aria-current="page">ویرایش پروفایل {{ user.username }} </li>
+            </ul>
+        </nav>
+    </div>
+
+    <main>
+        <div class="container">
+            <div class="user-account">
+                <div class="row">
+                    <div class="col-md-3 col-sm-4 col-xs-12">
+                        {% include 'Partials/sidebar.html' %}
+                    </div>
+                    <div class="col-md-9 col-sm-8 col-xs-12">
+                        <section class="user-account-content">
+                            <header><h1> ویرایش حساب کاربری </h1></header>
+                            <div class="inner form-layer">
+                                <form action="{% url 'userpanel:EditProfile' %}" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                    {{ form.image_name }}
+                                    <div class="row">
+                                        <div class="col-md-7 col-sm-8 col-xs-12">
+                                            <div class="input-group">
+                                                <span class="input-group-addon" id="username"><i
+                                                        class="zmdi zmdi-account"></i></span>
+                                                {{ form.username }}
+                                            </div>
+                                            {{ form.errors.username }}
+                                        </div>
+                                        <div class="col-md-7 col-sm-8 col-xs-12">
+                                            <div class="input-group">
+                                                <span class="input-group-addon" id="email-address"><i
+                                                        class="zmdi zmdi-email"></i></span>
+                                                {{ form.email }}
+                                            </div>
+                                            {{ form.errors.email }}
+                                        </div>
+
+                                        <div class="col-md-7 col-sm-8 col-xs-12">
+                                            <p class="help-block">آواتار</p>
+                                            {% if user.image_name %}
+                                                <img src="{{ media_url }}{{ user.image_name }}"
+                                                     class="thumbnail" style="max-width:150px">
+                                            {% else %}
+                                                <img src="{{ media_url }}images/UserAvatar/Default.jpg"
+                                                     class="thumbnail" style="max-width:150px">
+                                            {% endif %}
+                                            {{ form.image }}
+                                        </div>
+                                        <div class="col-md-7 col-sm-8 col-xs-12">
+                                            <button class="btn btn-success"> ویرایش اطلاعات</button>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
