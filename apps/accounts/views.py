@@ -55,7 +55,11 @@ class LoginUserView(View):
 
     def get(self, request, *args, **kwargs):
         form = UserLoginForm()
-        return render(request, self.template_name, {'form': form})
+        context = {
+            'form': form,
+            'editProfile': request.GET.get('EditProfile')
+        }
+        return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         form = UserLoginForm(request.POST)

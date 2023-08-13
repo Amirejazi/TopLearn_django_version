@@ -6,69 +6,79 @@
 
 
 {% block content %}
-<div class="container">
-    <nav aria-label="breadcrumb">
-        <ul class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">تاپ لرن</a></li>
-            <li class="breadcrumb-item active" aria-current="page">ورود به سایت</li>
-        </ul>
-    </nav>
-</div>
-
-<main class="client-page">
-    <div class="container-content">
-{#        @if(ViewData["IsSuccess"]!=null)#}
-{#        {#}
-        {% if IsSuccess %}
-            <div class="alert alert-success">
-                <p class="help-block">ورود با موفقیت انجام شد:)</p>
-            </div>
-            {% if next_url %}
-                <script>
-                    var delay = 2000;
-                    setTimeout(function(){ window.location ="{% url '{{next_url}}' %}"; }, delay);
-                </Script>
-            {% else %}
-                <script>
-                var delay = 2000;
-                setTimeout(function(){ window.location ="/"; }, delay);
-            </Script>
-            {% endif %}
-        {% endif %}
-        <header><h2> ورود به سایت </h2></header>
-
-        <div class="form-layer">
-
-            <form action="" method="post">
-                {% csrf_token %}
-                <div class="input-group">
-                    <span class="input-group-addon" id="email-address"><i class="zmdi zmdi-email"></i></span>
-                    {{ form.email }}
-                </div>
-                {{ form.errors.email}}
-
-                <div class="input-group">
-                    <span class="input-group-addon" id="password"><i class="zmdi zmdi-lock"></i></span>
-                    {{ form.password }}
-                </div>
-                {{ form.errors.password }}
-
-                <div class="remember-me">
-                    <label>{{ form.remember_me }}  مرا بخاطر بسپار </label>
-                </div>
-
-                <div class="link">
-                    <a href="{% url 'accounts:ForgotPassword'%}"> <i class="zmdi zmdi-lock"></i> رمز عبور خود را فراموش کرده ام !</a>
-                    <a href="{% url 'accounts:Register' %}"> <i class="zmdi zmdi-account"></i> عضویت در سایت </a>
-                </div>
-
-                <input type="submit" class="btn btn-success" value="ورود به سایت" />
-
-            </form>
-        </div>
-
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">تاپ لرن</a></li>
+                <li class="breadcrumb-item active" aria-current="page">ورود به سایت</li>
+            </ul>
+        </nav>
     </div>
-</main>
+
+    <main class="client-page">
+        <div class="container-content">
+            {#        @if(ViewData["IsSuccess"]!=null)#}
+            {#        {#}
+            {% if IsSuccess %}
+                <div class="alert alert-success">
+                    <p class="help-block">ورود با موفقیت انجام شد:)</p>
+                </div>
+                {% if next_url %}
+                    <script>
+                        var delay = 2000;
+                        setTimeout(function () {
+                            window.location = "{% url '{{next_url}}' %}";
+                        }, delay);
+                    </Script>
+                {% else %}
+                    <script>
+                        var delay = 2000;
+                        setTimeout(function () {
+                            window.location = "/";
+                        }, delay);
+                    </Script>
+                {% endif %}
+            {% endif %}
+            {% if editProfile %}
+                <div class="alert alert-warning">
+                    <p class="help-block">به دلیل ویرایش کردن پروفایل مجدد لاگین کنید! </p>
+                </div>
+            {% endif %}
+            <header><h2> ورود به سایت </h2></header>
+
+            <div class="form-layer">
+
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <span class="input-group-addon" id="email-address"><i class="zmdi zmdi-email"></i></span>
+                        {{ form.email }}
+                    </div>
+                    {{ form.errors.email }}
+
+                    <div class="input-group">
+                        <span class="input-group-addon" id="password"><i class="zmdi zmdi-lock"></i></span>
+                        {{ form.password }}
+                    </div>
+                    {{ form.errors.password }}
+
+                    <div class="remember-me">
+                        <label>{{ form.remember_me }} مرا بخاطر بسپار </label>
+                    </div>
+
+                    <div class="link">
+                        <a href="{% url 'accounts:ForgotPassword' %}"> <i class="zmdi zmdi-lock"></i> رمز عبور خود را
+                            فراموش کرده ام !</a>
+                        <a href="{% url 'accounts:Register' %}"> <i class="zmdi zmdi-account"></i> عضویت در سایت </a>
+                    </div>
+
+                    <input type="submit" class="btn btn-success" value="ورود به سایت"/>
+
+                </form>
+            </div>
+
+        </div>
+    </main>
 
 
 {% endblock %}
