@@ -51,11 +51,12 @@ def upload_user_image(instance, filename):
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=200, unique=True)
     email = models.EmailField(max_length=200, unique=True)
-    active_code = models.CharField(max_length=50, blank=True, null=True)
+    active_code = models.CharField(max_length=50, blank=True, null=True,verbose_name='کد فعال سازی')
     image_name = models.ImageField(upload_to=upload_user_image, null=True, blank=True, verbose_name='آواتار')
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False, verbose_name='وضعیت(فعال/غیرفعال)')
     register_date = models.DateField(default=timezone.now)
-    is_admin = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False, verbose_name='مدیر')
+    is_superuser = models.BooleanField(default=False, verbose_name='مدیرکل')
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
@@ -68,6 +69,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def is_staff(self):
         return self.is_admin
+
 
     class Meta:
         verbose_name = 'کاربر'
