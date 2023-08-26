@@ -1,0 +1,21 @@
+<div class="main-menu">
+    <div class="container">
+        <nav>
+            <span class="responsive-sign"><i class="zmdi zmdi-menu"></i></span>
+            <ul>
+                {% for group in groups %}
+                <li><a href=""> {{ group.groupTitle }} </a>
+                    {% if group.SubGroups.all %}
+                    <ul>
+                        {% for subgroup in group.SubGroups.all %}
+                        <li><a href=""> {{ subgroup.groupTitle }} </a></li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </li>
+                {% endfor %}
+
+            </ul>
+        </nav>
+    </div>
+</div>

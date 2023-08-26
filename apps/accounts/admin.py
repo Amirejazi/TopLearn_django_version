@@ -21,11 +21,7 @@ class CustomUserAdmin(UserAdmin):
         ('دسترسی ها', {'fields': ('is_active', 'is_admin', 'is_superuser', 'groups', 'user_permissions')})
     )
     fieldsets = (
-        (None, {'fields': ('username', 'email', 'password')}),
+        (None, {'fields': ('username', 'email', 'password','image_name')}),
         ('اطلاعات امنیتی', {'fields': ('active_code',)}),
         ('دسترسی ها',  {"classes": ["collapse"], 'fields': ('is_active', 'is_admin', 'is_superuser', 'groups', 'user_permissions')})
     )
-    class Media:
-        css = {
-            'all': ('css/admin/my_own_admin.css',)
-        }

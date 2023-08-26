@@ -45,7 +45,7 @@ class EditProfileView(LoginRequiredMixin, View):
             form.add_error('username', 'این نام کاربری قبلا استفاده شده است!')
             return render(request, self.template_name, {'form': form})
         if data['image'] is not None:
-            user.set_image(data['image'])
+            user.image_name = data['image']
         user.save()
         logout(request)
         return redirect("/account/login?EditProfile=true")

@@ -45,13 +45,21 @@ class CustomUserManager(BaseUserManager):
 
 def upload_user_image(instance, filename):
     filename, ext = os.path.splitext(filename)
-    return f"images/UserAvatar/{uuid4()}{ext}"
+    try:
+        user = User.objects.get(id=instance.id)
+        if user.image_name is not None:
+            image_path = MEDIA_ROOT + str(user.image_name)
+            if os.path.exists(image_path):
+                os.remove(image_path)
+        return f"images/UserAvatar/{uuid4()}{ext}"
+    except User.DoesNotExist:
+        return f"images/UserAvatar/{uuid4()}{ext}"
 
 
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=200, unique=True)
     email = models.EmailField(max_length=200, unique=True)
-    active_code = models.CharField(max_length=50, blank=True, null=True,verbose_name='کد فعال سازی')
+    active_code = models.CharField(max_length=50, blank=True, null=True, verbose_name='کد فعال سازی')
     image_name = models.ImageField(upload_to=upload_user_image, null=True, blank=True, verbose_name='آواتار')
     is_active = models.BooleanField(default=False, verbose_name='وضعیت(فعال/غیرفعال)')
     register_date = models.DateField(default=timezone.now)
@@ -78,13 +86,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_register_date_shamsi(self):
         jdatetime_obj = jdatetime.datetime.fromgregorian(datetime=self.register_date)
         return jdatetime_obj.strftime('%Y/%m/%d')
-
-    def set_image(self, image):
-        if self.image_name is not None:
-            image_path = MEDIA_ROOT + 'media/images/UserAvatar/' + str(self.image_name)
-            if os.path.exists(image_path):
-                os.remove(image_path)
-        self.image_name = image
 
     def get_wallets_user(self):
         return self.wallets_of_user.filter(is_pay=True)
