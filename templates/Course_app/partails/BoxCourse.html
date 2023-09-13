@@ -1,0 +1,32 @@
+{% load humanize %}
+
+{% if type == 1 %}
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 term-col">
+        <article>
+            <a href="" class="img-layer"><img src="{{ media_url }}{{ course.courseImageName }}"></a>
+            <h2><a href=""> {{ course.courseTitle }} </a></h2>
+            {% if course.price > 0 %}
+                <span> {{ course.price| intcomma }} </span>
+            {% else %}
+                <span> رایگان </span>
+            {% endif %}
+
+            <i>{{ course.total_time }}</i>
+        </article>
+    </div>
+{% elif type == 2 %}
+    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 term-col">
+        <article>
+            <a href="" class="img-layer">
+                <img src="{{ media_url }}{{ course.courseImageName }}" alt="{{ course.courseTitle }}">
+            </a>
+            <h2><a href=""> {{ course.courseTitle }} </a></h2>
+            {% if course.price > 0 %}
+                <span> {{ course.price| intcomma }} </span>
+            {% else %}
+                <span> رایگان </span>
+            {% endif %}
+            <i>1:52:32</i>
+        </article>
+    </div>
+{% endif %}

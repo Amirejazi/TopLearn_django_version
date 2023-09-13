@@ -1,0 +1,288 @@
+{% extends "mainTemplate.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}
+    دوره ها
+{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">تاپ لرن</a></li>
+                <li class="breadcrumb-item active"><a href="#">دوره ها</a></li>
+                <li class="breadcrumb-item active" aria-current="page"> برنامه نویسی وب</li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="container">
+        <form id="form_filter" action="" method="get">
+            <input type="hidden" id="pageid" name="pageId" value="{{ page_number }}"/>
+            <section class="term-categories">
+
+                <div class="top-bar">
+
+                    <header>
+                        <h1> دوره های <span> برنامه نویسی وب </span></h1> <span> {{ courses_count }} دوره </span>
+                    </header>
+
+                    <div class="row">
+                        <div class="col-md-4 col-sm-12 col-xs-12 pull-right">
+                            <div class="input">
+                                <input class="searchinput" type="text" name="filter" placeholder="موضوع مورد نظر ...">
+                                <button class="searchsub"><i class="zmdi zmdi-search"></i></button>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12 pull-right">
+                            <div class="switch-field available">
+                                <input onchange="change()" id="available-filter-1" name="getType" value="all" checked=""
+                                       type="radio">
+                                <label for="available-filter-1"> همه </label>
+                                <input onchange="change()" id="available-filter-2" name="getType" value="buy"
+                                       type="radio">
+                                <label for="available-filter-2"> خریدنی </label>
+                                <input onchange="change()" id="available-filter-3" name="getType" value="free"
+                                       type="radio">
+                                <label for="available-filter-3"> رایگان </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12 pull-left">
+                            <div class="select-ddl">
+                                <select onchange="change()" name="orderByType">
+                                    <option value="date"> تاریخ انتشار</option>
+                                    <option value="updatedate"> تاریخ بروزرسانی</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <aside class="col-lg-3 col-md-4 col-sm-12 col-xs-12">
+
+                        <section class="aside-section filter-by-price">
+                            <header>
+                                <h3> فیلتر بر اساس قیمت </h3>
+                            </header>
+                            <div class="price-range">
+                                <input type="hidden" value="" id="min-value" name="startPrice">
+                                <input type="hidden" value="" id="max-value" name="endPrice">
+                                <div class="price-bar">
+                                    <div id="priceFilter"></div>
+                                </div>
+                                <div class="max-price">تا <span id="max-text">{{ res_aggre.max | intcomma }}</span>
+                                    تومان
+                                </div>
+                                <div class="min-price">از <span id="min-text">{{ res_aggre.min | intcomma }}</span>
+                                    تومان
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </section>
+
+                        <section class="aside-section filter-by-category">
+                            <header>
+                                <h3> دسته بندی موضوعات </h3>
+                            </header>
+
+                            <div class="inner">
+                                <ul>
+                                    {% for group in main_groups %}
+                                        <li>
+                                            <input onchange="change()" type="checkbox"
+                                                   name="selectedGroup"
+                                                   value="{{ group.id }}" id="group-{{ group.id }}">
+                                            <label for="cat-1"> {{ group.groupTitle }} </label>
+                                            {% if group.SubGroups.count > 1 %}
+                                                <ul>
+                                                    {% for sub in group.SubGroups.all %}
+                                                        <li>
+                                                            <input onchange="change()"
+                                                                   type="checkbox"
+                                                                   name="selectedGroup" value="{{ sub.id }}"
+                                                                   id="group-{{ sub.id }}">
+                                                            <label for="cat-1"> {{ sub.groupTitle }} </label>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </section>
+
+                    </aside>
+
+                    <div class="col-lg-9 col-md-8 col-sm-12 col-xs-12">
+
+                        <section class="terms-items">
+                            <div class="row">
+                                {% for course in page_obj %}
+                                    {% include 'Course_app/partails/BoxCourse.html' with type=2 %}
+                                {% endfor %}
+                            </div>
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-center">
+                                    {% if page_obj.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                               onclick="changePage({{ page_obj.previous_page_number }})" href="#"
+                                               aria-label="Previous">
+                                                <span aria-hidden="true"><i class="zmdi zmdi-chevron-right"></i></span>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item">
+                                            <a class="page-link disabled" href="#" aria-label="Previous">
+                                                <span aria-hidden="true"><i class="zmdi zmdi-chevron-right"></i></span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    {% for i in page_obj.paginator.page_range %}
+                                        {% if page_obj.number == i %}
+                                            <li class="page-item active"><a class="page-link"
+                                                                            onclick="changePage({{ i }})"
+                                                                            href="#">{{ i }}</a></li>
+                                        {% else %}
+                                            <li class="page-item"><a class="page-link" onclick="changePage({{ i }})"
+                                                                     href="#">{{ i }}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if page_obj.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" onclick="changePage({{ page_obj.next_page_number }})"
+                                               href="#" aria-label="Next">
+                                                <span aria-hidden="true"><i class="zmdi zmdi-chevron-left"></i></span>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item">
+                                            <a class="page-link disabled" href="#" aria-label="Next">
+                                                <span aria-hidden="true"><i class="zmdi zmdi-chevron-left"></i></span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </section>
+
+                    </div>
+                </div>
+            </section>
+        </form>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+
+    <script src="{% static 'noUiSlider/nouislider.min.js' %}"></script>
+    <script type="text/javascript">
+        $(function () {
+
+            var slider = document.getElementById('priceFilter');
+            noUiSlider.create(slider, {
+                start: [{{ res_aggre.min }}, {{ res_aggre.max }}],
+                step: 5000,
+                connect: true,
+                direction: 'rtl',
+                range: {
+                    'min': {{ res_aggre.min | intcomma }},
+                    'max': {{ res_aggre.max | intcomma }}
+                }
+            });
+
+            var marginMin = document.getElementById('min-text'),
+                marginMax = document.getElementById('max-text');
+
+            slider.noUiSlider.on('update', function (values, handle) {
+                var xvalue = Math.round(values[handle]);
+                if (handle) {
+                    marginMax.innerHTML = xvalue;
+                } else {
+                    marginMin.innerHTML = xvalue;
+                }
+                //console.log(values[handle]);
+            });
+
+            slider.noUiSlider.on('change', function (values, handle) {
+                var xvalue = Math.round(values[handle]);
+                if (handle) {
+                    // setGetParameter('max_price', xvalue);
+                    $('#max-value').val(xvalue);
+                } else {
+                    // setGetParameter('min_price', xvalue);
+                    $('#min-value').val(xvalue);
+                }
+            });
+
+
+            slider.noUiSlider.on('slide', function (values, handle) {
+
+                console.log(values[0]);
+                console.log(values[1]);
+
+                var xvalue = Math.round(values[handle]);
+                //updateSliderRange( Math.round(values[0]), Math.round(values[1]) );
+            });
+
+
+            function updateSliderRange(min, max) {
+                slider.noUiSlider.updateOptions({
+                    range: {
+                        'min': min,
+                        'max': max
+                    }
+                });
+            }
+        });
+        function changePage(pageid) {
+            $("#pageid").val(pageid);
+            $("#form_filter").submit();
+        }
+
+        function change() {
+            document.getElementById("form_filter").submit();
+        }
+    </script>
+
+    <script>
+        document.addEventListener('change', function (e) {
+            if (e.target.type === 'checkbox') {
+                localStorage.setItem(e.target.id, e.target.checked);
+            }
+            if (e.target.type === 'radio') {
+                localStorage.setItem(e.target.name, e.target.value);
+            }
+            if (e.target.tagName === 'SELECT') {
+                localStorage.setItem(e.target.name, e.target.value);
+            }
+        });
+        window.onload = function () {
+            var checkboxes = document.querySelectorAll('.inner input[type="checkbox"]');
+            checkboxes.forEach(function (checkbox) {
+                var checkedStatus = localStorage.getItem(checkbox.id);
+                if (checkedStatus !== null) {
+                    checkbox.checked = (checkedStatus === 'true');
+                }
+            });
+            var radios = document.querySelectorAll('.switch-field input[type="radio"]');
+            radios.forEach(function (radio) {
+                var selectedValue = localStorage.getItem(radio.name);
+                if (selectedValue !== null && radio.value === selectedValue) {
+                    radio.checked = true;
+                }
+            });
+            var selects = document.querySelectorAll('.select-ddl select');
+            selects.forEach(function (selectElement) {
+                var storedValue = localStorage.getItem(selectElement.name);
+                if (storedValue !== null) {
+                    selectElement.value = storedValue;
+                }
+            });
+        };
+    </script>
+{% endblock scripts %}

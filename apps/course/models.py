@@ -81,8 +81,8 @@ class Course(models.Model):
     price = models.PositiveIntegerField(verbose_name='قیمت دوره')
     tags = models.CharField(max_length=500, verbose_name='کلمات کلیدی')
     courseImageName = models.ImageField(upload_to=upload_course_image, verbose_name='تصویر دوره')
-    createDate = models.DateField(auto_now_add=True, verbose_name='تاریخ درج')
-    updateDate = models.DateField(auto_now=True, verbose_name='تاریخ بروزرسانی')
+    createDate = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ درج')
+    updateDate = models.DateTimeField(auto_now=True, verbose_name='تاریخ بروزرسانی')
     demoFileName = models.FileField(upload_to=upload_course_demo, verbose_name='ویدیو دمو دوره')
     group = models.ForeignKey(CourseGroup, on_delete=models.CASCADE, related_name='courses_of_group', verbose_name='گروه اصلی')
     subGroup = models.ForeignKey(CourseGroup, null=True, blank=True, on_delete=models.CASCADE, related_name='courses_of_subgroup', verbose_name='گروه فرعی')
@@ -113,10 +113,9 @@ class Course(models.Model):
 def thumbnail_creator(sender, instance, *args, **kwargs):
     course = Course.objects.get(id=instance.id)
     if instance.courseImageName:
-        compact_and_resize_image(instance.courseImageName, 200)
+        compact_and_resize_image(course.courseImageName, 200)
     #thumbnail = get_thumbnail(course.courseImageName, '200x150', quality=99, format='JPEG')
     # thumbnail.save('/path/to/save/thumbnail.jpg')
-
 
 
 @receiver(pre_delete, sender=Course)
@@ -128,14 +127,28 @@ def image_delete_handler(sender, instance, *args, **kwargs):
 
 ## Episode Model ================================================================================================
 
+def upload_episode_file(instance, filename):
+    return f"coursefiles/{filename}"
+
+
 class Episode(models.Model):
     episodeTitle = models.CharField(max_length=150, verbose_name='عنوان قسمت')
-    episodeTime = models.TimeField(verbose_name='زمان')
+    episodeTime = models.DurationField(verbose_name='زمان')
     is_free = models.BooleanField(default=False, verbose_name='رایگان بودن')
+    episodefilename = models.FileField(upload_to=upload_episode_file, verbose_name='فایل قسمت')
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='episodes', verbose_name='دوره مربوطه')
 
     def __str__(self):
         return self.episodeTitle
+
+    def save(self, *args, **kwargs):
+        try:
+            episode = Episode.objects.get(id=self.id)
+            if os.path.exists(MEDIA_ROOT + str(episode.episodefilename)) and self.episodefilename and (episode.episodefilename != self.episodefilename):
+                episode.episodefilename.delete(save=False)
+        except Episode.DoesNotExist:
+            pass
+        super(Episode, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'قسمت'
