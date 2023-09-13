@@ -5,9 +5,10 @@ from django.contrib.admin.actions import delete_selected
 from django.core import serializers
 from django.db.models import Q, Count
 from django.http import HttpResponse
+from django.urls import reverse
 from django.utils.html import format_html
 
-from apps.course.models import CourseGroup, Course, CourseStatus, CourseLevel
+from apps.course.models import CourseGroup, Course, CourseStatus, CourseLevel, Episode
 
 
 # CourseGroup Admin ====================================================================================
@@ -31,7 +32,7 @@ def export_as_json(modeladmin, request, queryset):
     return response
 
 
-class ProductGroupInstanceInlineAdmin(admin.TabularInline):
+class CourseGroupInstanceInlineAdmin(admin.TabularInline):
     model = CourseGroup
     extra = 1
 
@@ -57,7 +58,7 @@ class CourseGroupAdmin(admin.ModelAdmin):
     list_filter = (GroupFilter, 'is_active')
     search_fields = ('groupTitle',)
     ordering = ('parent', 'groupTitle',)
-    inlines = [ProductGroupInstanceInlineAdmin]
+    inlines = [CourseGroupInstanceInlineAdmin]
     actions = [deActive_productGroup, Active_productGroup, export_as_json]
     list_editable = ['is_active']
 
@@ -96,12 +97,17 @@ def Active_course(modeladmin, request, queryset):
     modeladmin.message_user(request, message)
 
 
+class EpisodeInstanceInlineAdmin(admin.TabularInline):
+    model = Episode
+    extra = 2
+
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('courseTitle', 'image_tag', 'courseStatus', 'price', 'updateDate', 'group', 'subGroup', 'teacher', 'is_active')
+    list_display = ('courseTitle', 'image_tag', 'courseStatus', 'price', 'updateDate', 'group', 'subGroup', 'teacher', 'is_active', 'view_episodes')
     list_filter = ('group', 'teacher', 'is_active')
     search_fields = ('courseTitle', 'group', 'subGroup', 'teacher', 'courseLevel')
     ordering = ('updateDate', 'courseTitle',)
+    inlines = [EpisodeInstanceInlineAdmin]
     actions = [DeActive_course, Active_course, export_as_json]
     list_editable = ['is_active']
 
@@ -111,6 +117,11 @@ class CourseAdmin(admin.ModelAdmin):
     @short_description('تصویر دوره')
     def image_tag(self, obj):
         return format_html(f'<img src="/media/images/course/thumb/{obj.base_courseImageName}"  />')
+
+    def view_episodes(self, obj):
+        url = reverse('admin:course_episode_changelist') + f'?course__id__exact={obj.id}'
+        return format_html('<a class="btn-sm btn-primary" href="{}">نمایش قسمت‌ها</a>', url)
+    view_episodes.short_description = 'نمایش قسمت‌ها'
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'subGroup':
@@ -136,7 +147,9 @@ class CourseAdmin(admin.ModelAdmin):
     )
 
     class Media:
-
+        css = {
+            'all': ("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-rtl/3.4.0/css/bootstrap-rtl.min.css",),
+        }
         js = (
             'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js',
             'js/admin_script.js',
@@ -153,3 +166,10 @@ class CourseStatusAdmin(admin.ModelAdmin):
 class CourseLevelAdmin(admin.ModelAdmin):
     list_display = ('id', 'levelTitle')
     search_fields = ('levelTitle',)
+
+
+@admin.register(Episode)
+class EpisodeAdmin(admin.ModelAdmin):
+    list_display = ('episodeTitle', 'episodeTime', 'is_free', 'course')
+    search_fields = ('episodeTitle',)
+    list_filter = ('course',)
