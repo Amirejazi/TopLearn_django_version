@@ -1,0 +1,139 @@
+{% extends "mainTemplate.html" %}
+{% load humanize %}
+
+{% block title %}
+    فاکتور شما
+{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">تاپ لرن</a></li>
+                <li class="breadcrumb-item active" aria-current="page">فاکتور شما</li>
+            </ul>
+        </nav>
+    </div>
+
+    <main>
+        <div class="container">
+            <div class="user-account">
+                <div class="row">
+                    <div class="col-md-3 col-sm-4 col-xs-12">
+                        {% include 'Partials/sidebar.html' %}
+                    </div>
+                    <div class="col-md-9 col-sm-8 col-xs-12">
+                        <section class="user-account-content">
+                            <header><h1> فاکتور شما </h1></header>
+                            <div class="inner form-layer">
+                                {% if finaly %}
+                                    <div class="alert alert-success">
+                                        با موفقیت پرداخت شد:)
+                                    </div>
+                                {% endif %}
+                                <table class="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th>دوره</th>
+                                        <th>تعداد</th>
+                                        <th>قیمت</th>
+                                        <th>جمع</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for order_detail in order.order_details.all %}
+                                        <tr>
+                                            <td>
+                                                <a href="{% url 'course:ShowCourses' id=order_detail.course.id %}"
+                                                   tabindex="_blank">{{ order_detail.course.courseTitle }}</a>
+                                            </td>
+                                            <td>{{ order_detail.count }}</td>
+                                            <td>{{ order_detail.price | intcomma }}</td>
+                                            <td>{% widthratio order_detail.price 1 order_detail.count %}</td>
+                                        </tr>
+                                    {% endfor %}
+
+                                    {% if order.is_finaly == False %}
+                                        <tr>
+                                            <td colspan="3" class="text-left">کد تخفیف</td>
+                                            <td>
+                                                <div class="row">
+                                                    <form action="{% url 'order:UseDiscount' %}" method="post">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="orderId" value="{{ order.id }}"/>
+                                                        <div class="col-md-9 ">
+                                                            <input type="text" name="code" class="form-control"/>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <button type="submit" class="btn btn-primary btn-block">
+                                                                اعمال
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <br/>
+
+                                                {% if discount_type %}
+                                                    {% if discount_type == "Success" %}
+                                                        <div class="alert alert-success">
+                                                            کد تخفیف با موفقیت اعمال شد:)
+                                                        </div>
+                                                    {% elif discount_type == "NotFound" %}
+                                                        <div class="alert alert-danger">
+                                                            کد تخفیف نادرست است
+                                                        </div>
+                                                    {% elif discount_type == "ExpiredDate" %}
+                                                        <div class="alert alert-danger">
+                                                            کد تخفیف منفضی شده است
+                                                        </div>
+                                                    {% elif discount_type == "Finished" %}
+                                                        <div class="alert alert-danger">
+                                                            تعداد استفاده از این کد تمام شده است
+                                                        </div>
+                                                    {% elif discount_type == "UserUsed" %}
+                                                        <div class="alert alert-danger">
+                                                            این کد تخفیف قبلا توسط شما استفاده شده است
+                                                        </div>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                    <tr>
+                                        <td colspan="3" class="text-left">جمع کل</td>
+                                        <td> {{ order.order_sum | intcomma }}</td>
+                                    </tr>
+                                    {% if order.is_finaly == False %}
+                                        {% if user.balance_wallet >= order.order_sum %}
+                                            <tr>
+                                                <td colspan="4">
+                                                    <a class="btn btn-success btn-block"
+                                                       href="{% url 'order:FinallyOrder' order_id=order.id %}">تایید
+                                                        فاکتور</a>
+                                                </td>
+                                            </tr>
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="4">
+                                                    <a class="btn btn-success btn-block" disabled href="">تایید
+                                                        فاکتور</a>
+                                                    <div class="alert alert-danger">
+                                                        کیف پول شما کافی نمی باشد لطفا از طریق این
+                                                        <a href="/UserPanel/Wallet" class="alert-link">لینک</a>
+                                                        اقدام به شارژ کیف پول خود کنید
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endif %}
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

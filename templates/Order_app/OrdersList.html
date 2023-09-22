@@ -1,0 +1,75 @@
+{% extends "mainTemplate.html" %}
+{% load humanize %}
+
+{% block title %}
+    فاکتور های شما
+{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">تاپ لرن</a></li>
+                <li class="breadcrumb-item active" aria-current="page">فاکتور های شما</li>
+            </ul>
+        </nav>
+    </div>
+
+    <main>
+        <div class="container">
+            <div class="user-account">
+                <div class="row">
+                    <div class="col-md-3 col-sm-4 col-xs-12">
+                        {% include 'Partials/sidebar.html' %}
+                    </div>
+                    <div class="col-md-9 col-sm-8 col-xs-12">
+                        <section class="user-account-content">
+                            <header><h1> فاکتورهای شما </h1></header>
+                            <div class="inner form-layer">
+                                <table class="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th>شماره فاکتور</th>
+                                        <th>تاریخ</th>
+                                        <th>پرداخت</th>
+                                        <th>جمع</th>
+                                        <th>دستورات</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for order in orders %}
+                                    <tr>
+                                        <td>
+                                            {{ order.id}}
+                                        </td>
+                                        <td>{{ order.get_created_date_shamsi }}</td>
+                                        <td>
+                                            {% if order.is_finaly %}
+                                                <p class="text-success">
+                                                    <i class="zmdi zmdi-check"></i>
+                                                    پرداخت شده
+                                                </p>
+                                            {% else %}
+                                                <p class="text-danger">
+                                                    <i class="zmdi zmdi-alert-triangle"></i>
+                                                    پرداخت نشده
+                                                </p>
+                                            {% endif %}
+                                        <td>{{ order.order_sum | intcomma }}</td>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-info btn-block"
+                                               href="{% url 'order:ShowOrder' order_id=order.id %}">نمایش فاکتور</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
