@@ -135,12 +135,6 @@
                                                 <span aria-hidden="true"><i class="zmdi zmdi-chevron-right"></i></span>
                                             </a>
                                         </li>
-                                    {% else %}
-                                        <li class="page-item">
-                                            <a class="page-link disabled" href="#" aria-label="Previous">
-                                                <span aria-hidden="true"><i class="zmdi zmdi-chevron-right"></i></span>
-                                            </a>
-                                        </li>
                                     {% endif %}
                                     {% for i in page_obj.paginator.page_range %}
                                         {% if page_obj.number == i %}
@@ -156,12 +150,6 @@
                                         <li class="page-item">
                                             <a class="page-link" onclick="changePage({{ page_obj.next_page_number }})"
                                                href="#" aria-label="Next">
-                                                <span aria-hidden="true"><i class="zmdi zmdi-chevron-left"></i></span>
-                                            </a>
-                                        </li>
-                                    {% else %}
-                                        <li class="page-item">
-                                            <a class="page-link disabled" href="#" aria-label="Next">
                                                 <span aria-hidden="true"><i class="zmdi zmdi-chevron-left"></i></span>
                                             </a>
                                         </li>
@@ -239,6 +227,7 @@
                 });
             }
         });
+
         function changePage(pageid) {
             $("#pageid").val(pageid);
             $("#form_filter").submit();
@@ -250,18 +239,43 @@
     </script>
 
     <script>
-        document.addEventListener('change', function (e) {
-            if (e.target.type === 'checkbox') {
-                localStorage.setItem(e.target.id, e.target.checked);
-            }
-            if (e.target.type === 'radio') {
-                localStorage.setItem(e.target.name, e.target.value);
-            }
-            if (e.target.tagName === 'SELECT') {
-                localStorage.setItem(e.target.name, e.target.value);
-            }
-        });
+
+
         window.onload = function () {
+            const params = new URLSearchParams(window.location.search);
+            if (!params.has('selectedGroup')) {
+                // پاک کردن مواردی در localStorage که با پیشوند "group-" شروع می‌شوند
+                for (let key in localStorage) {
+                    if (key.startsWith('group-')) {
+                        localStorage.removeItem(key);
+                    }
+                }
+            }
+            if (!params.has('getType')) {
+                localStorage.removeItem('getType');
+            }
+            if (!params.has('orderByType')) {
+                localStorage.removeItem('orderByType');
+            }
+            if (!params.has('filter')) {
+                localStorage.removeItem('filter');
+            }
+
+            // برای هر پارامتر با نام "selectedGroup"
+            params.forEach((value, name) => {
+                if (name === 'selectedGroup') {
+                    localStorage.setItem('group-' + value, true);
+                }
+                if (name === 'getType') {
+                    localStorage.setItem('getType', value);
+                }
+                if (name === 'orderByType') {
+                    localStorage.setItem('orderByType', value);
+                }
+                if (name === 'filter') {
+                    localStorage.setItem('filter', value);
+                }
+            });
             var checkboxes = document.querySelectorAll('.inner input[type="checkbox"]');
             checkboxes.forEach(function (checkbox) {
                 var checkedStatus = localStorage.getItem(checkbox.id);
@@ -283,6 +297,11 @@
                     selectElement.value = storedValue;
                 }
             });
+            var filterinput = document.querySelector('.input .searchinput');
+            var storedValue = localStorage.getItem(filterinput.name);
+            if (storedValue !== null) {
+                filterinput.value = storedValue;
+            }
         };
     </script>
 {% endblock scripts %}
