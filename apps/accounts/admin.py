@@ -6,7 +6,7 @@ from .models import User
 
 
 @admin.register(User)
-class CustomUserAdmin(UserAdmin):
+class UserAdmin(UserAdmin):
     add_form = UserCreationForm
     form = UserChangeForm
 
@@ -14,7 +14,7 @@ class CustomUserAdmin(UserAdmin):
     list_filter = ('is_active', 'is_admin')
     list_editable = ('is_active',)
     search_fields = ('username', 'email')
-    ordering = ('username', 'email')
+    ordering = ('username', 'email', 'register_date')
     filter_horizontal = ('groups', 'user_permissions')
     add_fieldsets = (
         (None, {'fields': ('username', 'email', 'password1', 'password2',)}),

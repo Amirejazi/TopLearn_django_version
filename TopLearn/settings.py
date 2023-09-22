@@ -40,9 +40,12 @@ INSTALLED_APPS = [
     'apps.userpanel.apps.UserpanelConfig',
     'apps.payment.apps.PaymentConfig',
     'apps.course.apps.CourseConfig',
+    'apps.order.apps.OrderConfig',
 
     'django_render_partial',
     'sorl.thumbnail',
+    'ckeditor',
+    'ckeditor_uploader',
 ]
 
 MIDDLEWARE = [
@@ -148,4 +151,10 @@ EMAIL_USE_SSL = False
 
 SANDBOX = True
 
-THUMBNAIL_PREFIX= 'images/course/thumb/'
+# THUMBNAIL_PREFIX = 'images/course/thumb/'
+
+CKEDITOR_UPLOAD_PATH = 'images/ckeditor/uploaded_files/'
+CKEDITOR_STORAGE_BACKEND = 'django.core.files.storage.FileSystemStorage'
+from apps.course.ckeditor_configs import ckeditor_configs
+
+CKEDITOR_CONFIGS = ckeditor_configs

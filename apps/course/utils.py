@@ -2,9 +2,10 @@ from io import BytesIO
 from PIL import Image
 import os
 
-from django.db.models import Q
+from django.db.models import Q, Sum, F
 
 from TopLearn.settings import MEDIA_ROOT
+from django.apps import apps
 
 
 def compact_and_resize_image(image_path, new_width):
@@ -31,7 +32,7 @@ def compact_and_resize_image(image_path, new_width):
 
 def apply_filters_on_courses(courses, search_filter, get_type, order_by_type, start_price, end_price, group_filter):
     if search_filter:
-        courses = courses.filter(Q(courseTitle__icontains=search_filter))
+        courses = courses.filter(Q(courseTitle__icontains=search_filter) | Q(tags__icontains=search_filter))
 
     if get_type:
         match get_type:
@@ -57,3 +58,38 @@ def apply_filters_on_courses(courses, search_filter, get_type, order_by_type, st
             courses = courses.filter(Q(group__id=groupid) | Q(subGroup__id=groupid))
 
     return courses
+
+
+def add_order(user, course):
+    Order = apps.get_model('order', 'Order')
+    OrderDetail = apps.get_model('order', 'OrderDetail')
+    try:
+        order = Order.objects.get(Q(user=user) & Q(is_finaly=False))
+        try:
+            order_detail = OrderDetail.objects.get(Q(order=order) & Q(course=course))
+            order_detail.count += 1
+            order_detail.save()
+        except OrderDetail.DoesNotExist:
+            OrderDetail.objects.create(
+                order=order,
+                course=course,
+                count=1,
+                price=course.price
+            )
+        finally:
+            order.order_sum = OrderDetail.objects.filter(order=order).aggregate(total=Sum(F('price') * F('count')))['total']
+            order.save()
+            return order.id
+    except Order.DoesNotExist:
+        order = Order.objects.create(
+            user=user,
+            is_finaly=False,
+            order_sum=course.price,
+        )
+        OrderDetail.objects.create(
+            order=order,
+            course=course,
+            count=1,
+            price=course.price
+        )
+        return order.id

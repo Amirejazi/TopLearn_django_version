@@ -1,13 +1,16 @@
 import os
 from uuid import uuid4
+
+import jdatetime
+from admin_decorators import short_description
+from ckeditor_uploader.fields import RichTextUploadingField
 from django.db import models
 from django.db.models.signals import pre_delete, pre_save, post_save
 from django.dispatch import receiver
 from sorl.thumbnail import get_thumbnail
-
 from TopLearn.settings import MEDIA_ROOT
 from apps.accounts.models import User
-from apps.course.utils import compact_and_resize_image
+from .utils import compact_and_resize_image
 
 
 class CourseGroup(models.Model):
@@ -77,18 +80,19 @@ def upload_course_demo(instance, filename):
 
 class Course(models.Model):
     courseTitle = models.CharField(max_length=200, verbose_name='عنوان دوره')
-    description = models.TextField(max_length=650, verbose_name='شرح دوره')
+    description = RichTextUploadingField(config_name='super', verbose_name='شرح دوره')
     price = models.PositiveIntegerField(verbose_name='قیمت دوره')
     tags = models.CharField(max_length=500, verbose_name='کلمات کلیدی')
     courseImageName = models.ImageField(upload_to=upload_course_image, verbose_name='تصویر دوره')
     createDate = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ درج')
-    updateDate = models.DateTimeField(auto_now=True, verbose_name='تاریخ بروزرسانی')
+    updateDate = models.DateTimeField(auto_now=True, verbose_name='آخرین بروزرسانی')
     demoFileName = models.FileField(upload_to=upload_course_demo, verbose_name='ویدیو دمو دوره')
     group = models.ForeignKey(CourseGroup, on_delete=models.CASCADE, related_name='courses_of_group', verbose_name='گروه اصلی')
     subGroup = models.ForeignKey(CourseGroup, null=True, blank=True, on_delete=models.CASCADE, related_name='courses_of_subgroup', verbose_name='گروه فرعی')
     courseStatus = models.ForeignKey(CourseStatus, on_delete=models.CASCADE, related_name='courses_of_status', verbose_name='وضعیت دوره')
     courseLevel = models.ForeignKey(CourseLevel, on_delete=models.CASCADE, related_name='courses_of_level', verbose_name='سطح دوره')
     teacher = models.ForeignKey(User, on_delete=models.CASCADE, related_name='courses_of_user', verbose_name='مدرس')
+    user = models.ManyToManyField(User, related_name='users_in_course', verbose_name='کاربرانی که دوره رو تهیه کردن')
     is_active = models.BooleanField(default=False, verbose_name='وضعیت (فعال/غیرفعال)')
 
     def __str__(self):
@@ -98,7 +102,20 @@ class Course(models.Model):
     def base_courseImageName(self):
         return os.path.basename(self.courseImageName.name)
 
+    def get_createDate_shamsi(self):
+        jdatetime_obj = jdatetime.datetime.fromgregorian(datetime=self.createDate)
+        return jdatetime_obj.strftime('%Y/%m/%d')
+
+    @short_description('آخرین بروزرسانی')
+    def get_updateDate_shamsi(self):
+        jdatetime_obj = jdatetime.datetime.fromgregorian(datetime=self.updateDate)
+        return jdatetime_obj.strftime('%Y/%m/%d')
+
     class Meta:
+        indexes = [
+            models.Index(fields=['-createDate']),
+            models.Index(fields=['-updateDate']),
+        ]
         verbose_name = 'دوره'
         verbose_name_plural = 'دوره ها'
         db_table = 't_courses'
@@ -127,6 +144,7 @@ def image_delete_handler(sender, instance, *args, **kwargs):
 
 ## Episode Model ================================================================================================
 
+
 def upload_episode_file(instance, filename):
     return f"coursefiles/{filename}"
 
@@ -154,3 +172,4 @@ class Episode(models.Model):
         verbose_name = 'قسمت'
         verbose_name_plural = 'قسمت ها'
         db_table = 't_episodes'
+

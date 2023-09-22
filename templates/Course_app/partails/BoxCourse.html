@@ -3,8 +3,8 @@
 {% if type == 1 %}
     <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 term-col">
         <article>
-            <a href="" class="img-layer"><img src="{{ media_url }}{{ course.courseImageName }}"></a>
-            <h2><a href=""> {{ course.courseTitle }} </a></h2>
+            <a href="{% url 'course:ShowCourses' id=course.id %}" class="img-layer"><img src="{{ media_url }}{{ course.courseImageName }}"></a>
+            <h2><a href="{% url 'course:ShowCourses' id=course.id %}"> {{ course.courseTitle }} </a></h2>
             {% if course.price > 0 %}
                 <span> {{ course.price| intcomma }} </span>
             {% else %}
@@ -17,10 +17,10 @@
 {% elif type == 2 %}
     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 term-col">
         <article>
-            <a href="" class="img-layer">
+            <a href="{% url 'course:ShowCourses' id=course.id %}" class="img-layer">
                 <img src="{{ media_url }}{{ course.courseImageName }}" alt="{{ course.courseTitle }}">
             </a>
-            <h2><a href=""> {{ course.courseTitle }} </a></h2>
+            <h2><a href="{% url 'course:ShowCourses' id=course.id %}"> {{ course.courseTitle }} </a></h2>
             {% if course.price > 0 %}
                 <span> {{ course.price| intcomma }} </span>
             {% else %}

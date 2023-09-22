@@ -101,9 +101,10 @@ class EpisodeInstanceInlineAdmin(admin.TabularInline):
     model = Episode
     extra = 2
 
+
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('courseTitle', 'image_tag', 'courseStatus', 'price', 'updateDate', 'group', 'subGroup', 'teacher', 'is_active', 'view_episodes')
+    list_display = ('courseTitle', 'image_tag', 'courseStatus', 'price', 'get_updateDate_shamsi', 'group', 'subGroup', 'teacher', 'is_active', 'view_episodes')
     list_filter = ('group', 'teacher', 'is_active')
     search_fields = ('courseTitle', 'group', 'subGroup', 'teacher', 'courseLevel')
     ordering = ('updateDate', 'courseTitle',)

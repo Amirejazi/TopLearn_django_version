@@ -72,14 +72,17 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
 
     def __str__(self):
-        return f"{self.username}  {self.email}"
+        return f"نام کاربری : {self.username}"
 
     @property
     def is_staff(self):
         return self.is_admin
 
-
     class Meta:
+        indexes = [
+            models.Index(fields=['register_date']),
+            models.Index(fields=['username']),
+        ]
         verbose_name = 'کاربر'
         verbose_name_plural = 'کاربران'
 
@@ -99,5 +102,4 @@ class User(AbstractBaseUser, PermissionsMixin):
             exit = 0
 
         return (enter - exit)
-
 

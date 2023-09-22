@@ -10,5 +10,7 @@ urlpatterns = [
     path('userpanel/', include('apps.userpanel.urls', namespace='userpanel')),
     path('payment/', include('apps.payment.urls', namespace='payment')),
     path('course/', include('apps.course.urls', namespace='course')),
+    path('order/', include('apps.order.urls', namespace='order')),
 
+    path('ckeditor', include('ckeditor_uploader.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
