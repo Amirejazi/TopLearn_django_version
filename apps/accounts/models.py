@@ -1,5 +1,4 @@
 from uuid import uuid4
-
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.db.models import Q, Sum
@@ -101,5 +100,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         if exit is None:
             exit = 0
 
-        return (enter - exit)
+        return enter - exit
 
+    def is_user_in_course(self, course_id):
+        return self.courses_of_user.filter(id=course_id).exists()

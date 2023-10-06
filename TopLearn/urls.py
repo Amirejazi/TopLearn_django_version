@@ -11,6 +11,9 @@ urlpatterns = [
     path('payment/', include('apps.payment.urls', namespace='payment')),
     path('course/', include('apps.course.urls', namespace='course')),
     path('order/', include('apps.order.urls', namespace='order')),
+    path('forum/', include('apps.forum.urls', namespace='forum')),
 
     path('ckeditor', include('ckeditor_uploader.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+admin.site.site_header = "مدیریت Toplearn"
