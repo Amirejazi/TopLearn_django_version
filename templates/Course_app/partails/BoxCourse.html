@@ -10,8 +10,11 @@
             {% else %}
                 <span> رایگان </span>
             {% endif %}
-
+        {% if not course.total_time is None %}
             <i>{{ course.total_time }}</i>
+        {% else %}
+            <i>00:00:00</i>
+        {% endif %}
         </article>
     </div>
 {% elif type == 2 %}

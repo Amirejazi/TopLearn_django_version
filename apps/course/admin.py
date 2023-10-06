@@ -7,7 +7,7 @@ from django.db.models import Q, Count
 from django.http import HttpResponse
 from django.urls import reverse
 from django.utils.html import format_html
-
+from apps.course.forms import AddCourseForm
 from apps.course.models import CourseGroup, Course, CourseStatus, CourseLevel, Episode
 
 
@@ -111,6 +111,8 @@ class CourseAdmin(admin.ModelAdmin):
     inlines = [EpisodeInstanceInlineAdmin]
     actions = [DeActive_course, Active_course, export_as_json]
     list_editable = ['is_active']
+
+    form = AddCourseForm
 
     deActive_productGroup.short_description = 'غیرفعال کردن کالا های انتخاب شده'
     Active_productGroup.short_description = 'فعال کردن کالا های انتخاب شده'
