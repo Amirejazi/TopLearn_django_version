@@ -1,0 +1,58 @@
+{% extends "mainTemplate.html" %}
+{% load static %}
+
+{% block title %}
+    پرسش
+{% endblock title %}
+
+{% block content %}
+
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">تاپ لرن</a></li>
+                <li class="breadcrumb-item active" aria-current="page">پرسش</li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="row ">
+        <div class="col-md-3"></div>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.course_id }}
+            <div class="col-md-6">
+                <div class="panel panel-info">
+                    <div class="panel-heading"> پرسش</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label>عنوان سوال</label>
+                            {{ form.title }}
+                            {{ form.errors.title }}
+                        </div>
+                        <div class="form-group">
+                            <label for={{ form.body.id_for_label }}>متن سوال</label>
+                            <br>
+                            {{ form.body }}
+                            {{ form.errors.title }}
+                        </div>
+
+                        <div class="row" style="margin:2px">
+                            <p>
+                                <input type="submit" value="ارسال سوال" class="btn btn-success"/>
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript" src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+    <script type="text/javascript" src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+{% endblock %}

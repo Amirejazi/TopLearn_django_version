@@ -1,0 +1,86 @@
+{% extends "mainTemplate.html" %}
+{% load static %}
+
+{% block title %}
+    پرسش
+{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/"> تاپ لرن </a></li>
+                <li class="breadcrumb-item"><a href="{% url 'forum:ListQuestion' %}"> پرسش و پاسخ ها</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="top-bar">
+                    <div class="row">
+                        <div class="col-md-5 col-sm-12 col-xs-12 pull-right">
+                            <form method="get">
+                                {% if course != None %}
+                                    <input type="hidden" value="{{ course.id }}" name="course_id"/>
+                                {% endif %}
+                                <div class="input">
+                                    <input class="searchinput" type="text" name="filter" placeholder="عنوان پرسش مورد نظر ...">
+                                    <button class="searchsub"><i class="zmdi zmdi-search"></i></button>
+                                </div>
+                            </form>
+                        </div>
+                        {% if course != None %}
+                            {% if user.is_authenticated %}
+                                {% if course.price != 0 and is_user_in_course %}
+                                    <div class="col-md-3 col-sm-12 col-xs-12 pull-right">
+                                        <a class="btn btn-info" href="{% url 'forum:CreateQuestion' course_id=course.id %}">پرسیدن
+                                            سوال</a>
+                                    </div>
+                                {% else %}
+                                    <div class="col-md-3 col-sm-12 alert alert-danger">
+                                        شما این دوره رو خریداری نکردید
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <div class="col-md-3 col-sm-12 alert alert-danger">
+                                    برای پرسیدن سوال وارد سایت شوید
+                                </div>
+                            {% endif %}
+                        {% endif %}
+
+
+                    </div>
+                </div>
+                <div class="inner" style="margin-top: 25px;">
+                    {% for question in questions %}
+                    <div class="panel ">
+                        <div class="panel-heading">
+                            {% if question.user.image_name %}
+                                <img src="{{ media_url }}{{ question.user.image_name }}" style="max-width: 40px; border-radius: 20px;"/>
+                            {% else %}
+                                <img src="{{ media_url }}/images/UserAvatar/Default.jpg" style="max-width: 40px; border-radius: 20px;"/>
+                            {% endif %}
+                            {{ question.user.username }} | {{ question.get_created_date_shamsi }}
+
+                            <h1 style="margin:7px">
+                                <a href="/forum/show_question/{{ question.id }}">
+                                    عنوان: {{ question.title }}
+                                </a>
+                            </h1>
+                            <div class="text-muted pull-left">
+                                <a class="btn btn-secondary" href="{% url 'course:ShowCourses' id=question.course.id %}">{{ question.course.courseTitle }}</a>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            {{ questions.body }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock content %}

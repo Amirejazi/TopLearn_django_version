@@ -1,0 +1,105 @@
+{% extends "mainTemplate.html" %}
+{% load static %}
+
+{% block title %}
+    پرسش
+{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/"> تاپ لرن </a></li>
+                <li class="breadcrumb-item"><a href="/Forum/Questions"> پرسش و پاسخ </a></li>
+                <li class="breadcrumb-item active" aria-current="page"> {{ question.title }} </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="inner">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h1>{{ question.title }}</h1>
+                        </div>
+                        <div class="panel-body">
+                            {% autoescape off %}
+                                {{ question.body }}
+                            {% endautoescape %}
+                        </div>
+                        <div class="panel-footer">
+                            {% if question.user.image_name %}
+                                <img src="{{ media_url }}{{ question.user.image_name }}" style="max-width: 50px; border-radius: 20px;"/>
+                            {% else %}
+                                <img src="{{ media_url }}images/UserAvatar/Default.jpg" style="max-width: 50px; border-radius: 20px;"/>
+                            {% endif %}
+                            {{ question.user.username }} | {{ question.get_created_date_shamsi }}
+                        </div>
+                    </div>
+                </div>
+
+                <br/>
+
+                <div class="inner" style="margin-top: 25px;">
+                    {% for answer in question.answers.all %}
+                        <div class="panel {% if answer.is_true %}is_true{% endif %}">
+                            <div class=" panel-heading">
+                                {% if answer.user.image_name %}
+                                    <img src="{{ media_url }}{{ answer.user.image_name }}" style="max-width: 40px; border-radius: 20px;"/>
+                                {% else %}
+                                    <img src="{{ media_url }}images/UserAvatar/Default.jpg" style="max-width: 40px; border-radius: 20px;"/>
+                                {% endif %}
+                                {{ answer.user.username }} | {{ question.get_created_date_shamsi }}
+                            </div>
+                            <div class="panel-body">
+                                {% autoescape off %}
+                                    {{ answer.answer_body }}
+                                {% endautoescape %}
+                                {% if user.is_authenticated and question.user == user %}
+                                    <p>
+                                        <a class="btn btn-success pull-left"
+                                           href="{% url 'forum:SelectIsTrueAnswer' %}?question_id={{ question.id }}&answer_id={{ answer.id }}">پاسخ صحیح</a>
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+                {% if user.is_authenticated %}
+                    <div class="inner" style="margin-top: 25px;">
+                        <div class="panel">
+                            <div class="panel-heading">
+                                <h1 style="font-size: 18px;" class="text-success text-muted">افزودن پاسخ جدید</h1>
+                            </div>
+                            <div class="panel-body">
+                                <form action="{% url 'forum:AddAnswer' %}" method="post">
+                                    {% csrf_token %}
+                                    {{ form.question_id }}
+                                    <div class="form-group">
+                                        {{ form.answer_body }}
+                                        <button class="btn btn-block btn-success" style="margin-top: 20px; height: 50px; font-size:15px;" type="submit">ثبت پاسخ
+                                            شما
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger">
+                        برای پاسخ دادن به این سوال باید لاگین کنید!
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block scripts %}
+    <script type="text/javascript" src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+    <script type="text/javascript" src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+{% endblock %}

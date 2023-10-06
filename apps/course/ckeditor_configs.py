@@ -8,6 +8,22 @@ ckeditor_configs = {
             ['RemoveFormat', 'Source']
         ]
     },
+    'normal': {
+        'toolbar': 'Custom',
+        'height': 150,
+        'width': '100%',
+        'uiColor': '#bce8f1',
+        'contentsCss': 'img {max-width: 100%;height: auto! important;}',
+        'contentsLangDirection': 'rtl',
+        # 'toolbarCanCollapse': True,
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline'],
+            ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+            ['Link', 'Unlink'],
+            ['RemoveFormat', 'Source'],
+            ['Image', 'Flash', 'Table']
+        ]
+    },
     'super': {
         'skin': 'moono',
         # 'skin': 'office2013',
@@ -54,7 +70,7 @@ ckeditor_configs = {
         # 'mathJaxLib': '//cdn.mathjax.org/mathjax/2.2-latest/MathJax.js?config=TeX-AMS_HTML',
         'tabSpaces': 4,
         'extraPlugins': ','.join([
-            'uploadimage', # the upload image feature
+            'uploadimage',  # the upload image feature
             # your extra plugins here
             'div',
             'autolink',
