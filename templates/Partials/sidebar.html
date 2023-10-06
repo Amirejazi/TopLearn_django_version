@@ -33,4 +33,15 @@
             </ul>
         </div>
     </section>
+    {% if perms.course.master_panel %}
+        <section>
+        <header><h3> پنل مدرس </h3></header>
+        <div class="inner">
+            <ul>
+                <li><a href="{% url 'userpanel:MasterCoursesList' %}" > مدیریت دوره ها </a></li>
+
+            </ul>
+        </div>
+        </section>
+    {% endif %}
 </aside>
