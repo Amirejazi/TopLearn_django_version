@@ -1,5 +1,6 @@
 {% extends "mainTemplate.html" %}
-
+{% load render_partial %}
+{% load cache %}
 {% block title %}
     خانه
 {% endblock title %}
@@ -13,7 +14,7 @@
     </header>
     <div class="search-form">
         <form>
-            <input type="text" name="filter" placeholder="چی دوست داری یاد بگیری ؟">
+            <input type="text" name="filter" id="auto_filter" placeholder="چی دوست داری یاد بگیری ؟">
             <button><i class="zmdi zmdi-search"></i></button>
         </form>
     </div>
@@ -28,105 +29,33 @@
                     <h2> آخرین دوره های تاپ لرن </h2>
                     <a href="{% url 'course:Courses' %}"> مشاهده همه دوره ها </a>
                 </header>
-                <div class="row">
-                    {% for course in latest_courses %}
-                        {% include 'Course_app/partails/BoxCourse.html' with type=1 %}
-                    {% endfor %}
-
-                </div>
+                {% cache 300 latest_courses %}
+                    {% render_partial 'home:LatestCourses' %}
+                {% endcache %}
             </section>
 
             <hr>
-
             <section class="terms-items">
                 <header>
                     <h2> دوره های محبوب تاپ لرن </h2>
                     <a href=""> مشاهده همه دوره ها </a>
                 </header>
-                <div class="row">
-                    <!-- col -->
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 term-col">
-                        <article>
-                            <a href="" class="img-layer"><img src="{{ media_url }}/images/pic/1.jpg"></a>
-                            <h2><a href=""> آموزش متریال دیاین در زامارین </a></h2>
-                            <span> رایگان </span>
-                            <i>1:52:32</i>
-                        </article>
-                    </div>
-                    <!-- /col -->
-                    <!-- col -->
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 term-col">
-                        <article>
-                            <a href="" class="img-layer"><img src="{{ media_url }}/images/pic/2.jpg"></a>
-                            <h2><a href=""> آموزش متریال دیاین در زامارین </a></h2>
-                            <span> رایگان </span>
-                            <i>1:52:32</i>
-                        </article>
-                    </div>
-                    <!-- /col -->
-                    <!-- col -->
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 term-col">
-                        <article>
-                            <a href="" class="img-layer"><img src="{{ media_url }}/images/pic/3.jpg"></a>
-                            <h2><a href=""> آموزش متریال دیاین در زامارین </a></h2>
-                            <span> 150.000 تومان </span>
-                            <i>1:52:32</i>
-                        </article>
-                    </div>
-                    <!-- /col -->
-                    <!-- col -->
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 term-col">
-                        <article>
-                            <a href="" class="img-layer"><img src="{{ media_url }}/images/pic/4.jpg"></a>
-                            <h2><a href=""> آموزش متریال دیاین در زامارین </a></h2>
-                            <span> رایگان </span>
-                            <i>1:52:32</i>
-                        </article>
-                    </div>
-                    <!-- /col -->
-                    <!-- col -->
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 term-col">
-                        <article>
-                            <a href="" class="img-layer"><img src="{{ media_url }}/images/pic/5.jpg"></a>
-                            <h2><a href=""> آموزش متریال دیاین در زامارین </a></h2>
-                            <span> 15.000 تومان </span>
-                            <i>1:52:32</i>
-                        </article>
-                    </div>
-                    <!-- /col -->
-                    <!-- col -->
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 term-col">
-                        <article>
-                            <a href="" class="img-layer"><img src="{{ media_url }}/images/pic/6.jpg"></a>
-                            <h2><a href=""> آموزش متریال دیاین در زامارین </a></h2>
-                            <span> رایگان </span>
-                            <i>1:52:32</i>
-                        </article>
-                    </div>
-                    <!-- /col -->
-                    <!-- col -->
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 term-col">
-                        <article>
-                            <a href="" class="img-layer"><img src="{{ media_url }}/images/pic/7.jpg"></a>
-                            <h2><a href=""> آموزش متریال دیاین در زامارین </a></h2>
-                            <span> 20.000 تومان </span>
-                            <i>1:52:32</i>
-                        </article>
-                    </div>
-                    <!-- /col -->
-                    <!-- col -->
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 term-col">
-                        <article>
-                            <a href="" class="img-layer"><img src="{{ media_url }}/images/pic/8.jpg"></a>
-                            <h2><a href=""> آموزش متریال دیاین در زامارین </a></h2>
-                            <span> 75.000 تومان </span>
-                            <i>1:52:32</i>
-                        </article>
-                    </div>
-                    <!-- /col -->
-                </div>
+                {% cache 300 popular_courses %}
+                    {% render_partial 'home:PopularCourses' %}
+                {% endcache %}
             </section>
         </div>
     </main>
 
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#auto_filter").autocomplete({
+                source: "/search_complete",
+            });
+        });
+    </script>
 {% endblock %}
