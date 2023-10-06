@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'apps.payment.apps.PaymentConfig',
     'apps.course.apps.CourseConfig',
     'apps.order.apps.OrderConfig',
+    'apps.forum.apps.ForumConfig',
 
     'django_render_partial',
     'sorl.thumbnail',
@@ -56,6 +57,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'middlewares.security_media_middleware.SecurityOfMediaMiddleware',
+    'middlewares.handle404_middleware.Handle404Middleware'
 ]
 
 ROOT_URLCONF = 'TopLearn.urls'
@@ -158,3 +161,16 @@ CKEDITOR_STORAGE_BACKEND = 'django.core.files.storage.FileSystemStorage'
 from apps.course.ckeditor_configs import ckeditor_configs
 
 CKEDITOR_CONFIGS = ckeditor_configs
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+# LOGIN_REDIRECT_URL = '/account/profile/'
+LOGIN_URL = '/account/login/'
