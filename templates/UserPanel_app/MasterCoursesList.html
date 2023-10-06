@@ -1,0 +1,61 @@
+{% extends "mainTemplate.html" %}
+
+{% block title %}
+    لیست دوره های مدرس
+{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">تاپ لرن</a></li>
+                <li class="breadcrumb-item active" aria-current="page">لیست دوره های مدرس</li>
+            </ul>
+        </nav>
+    </div>
+
+    <main>
+        <div class="container">
+            <div class="user-account">
+                <div class="row">
+                    <div class="col-md-3 col-sm-4 col-xs-12">
+                        {% include 'Partials/sidebar.html' %}
+                    </div>
+                    <div class="col-md-9 col-sm-8 col-xs-12">
+                        <section class="user-account-content">
+                            <header><h1> لیست دوره های مدرس</h1></header>
+                            <div class="inner form-layer">
+                                <table class="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th>عنوان</th>
+                                        <th>وضعیت</th>
+                                        <th>تعداد قسمت ها</th>
+                                        <th>دستورات</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for course in courses %}
+                                        <tr>
+                                            <td>
+                                                {{ course.courseTitle }}
+                                            </td>
+                                            <td>{{ course.courseStatus.statusTitle }}</td>
+
+                                            <td>{{ course.episodes.count }}</td>
+                                            <td>
+                                                <a class="btn btn-info btn-block" href="{% url 'userpanel:MasterEpisodeList' course_id=course.id %}">مدیریت قسمت
+                                                    ها</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

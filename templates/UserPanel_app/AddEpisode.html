@@ -1,0 +1,121 @@
+{% extends "mainTemplate.html" %}
+
+{% block title %}
+    افزودن قسمت جدید
+{% endblock title %}
+
+{% block content %}
+
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">تاپ لرن</a></li>
+            <li class="breadcrumb-item active" aria-current="page">افزودن قسمت جدید</li>
+        </ul>
+    </nav>
+</div>
+
+<main>
+    <div class="container">
+        <div class="user-account">
+            <div class="row">
+                <div class="col-md-3 col-sm-4 col-xs-12">
+                    <partial name="_SideBar" />
+                </div>
+                <div class="col-md-9 col-sm-8 col-xs-12">
+                    <section class="user-account-content">
+                        <header><h1> افزودن قسمت جدید </h1></header>
+                        <div class="inner form-layer">
+                            <form action="" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {{ form.course_id }}
+                                {{ form.episodefilename }}
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-8 col-xs-12">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" id="username"><i class="zmdi zmdi-file-text"></i></span>
+                                            {{ form.title }}
+                                            {{ form.title.errors }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-8 col-xs-12">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="zmdi zmdi-time"></i></span>
+                                            {{ form.episodeTime }}
+                                            {{ form.episodeTime.errors }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label> رایگان است {{ form.is_free }}</label>
+
+                                    </div>
+                                    <div class="dropzone col-md-10 form-group" id="my-dropzone">
+                                        <div class="fallback">
+                                            <input name="files" type="file" multiple/>
+                                        </div>
+                                        <div class="dz-message">
+                                            <i class="zmdi zmdi-upload"></i>
+                                            <span>فایل خود را انتخاب و یا به داخل جعبه بیندازید</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-7 form-group">
+                                        <button id="SubmitBtn" class="btn btn-success"> افزودن قسمت </button>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script>
+        function DropzoneParameterName() {
+            return 'files';
+        }
+
+        Dropzone.options.myDropzone = {
+            url: "/userpanel/dropzone_target/{{ form.course_id.value }}",
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+            parallelUploads: 1, // How Many Files process in parallel
+            uploadMultiple: true, // Add Multiple To fallback input - Cant Use With chunking
+            maxFilesize: 100000000, // In byte - 100000000 is 100 mb
+            paramName: DropzoneParameterName, // if uploadMultiple is true set as true for add [] in name
+            maxFiles: 1, // If not null defines how many files this Dropzone handles. If it exceeds, the event maxfilesexceeded will be called.
+            acceptedFiles: '.mp4, .mkv', // default is null - This is a comma separated list of mime types or file extensions [image/*,application/pdf,.psd]
+            init: function() {
+                this.on("errormultiple",
+                    function(file, message) {
+                        swal("Error", message, "error");
+                    });
+                this.on("sendingmultiple",
+                    function(file) {
+                        $("#SubmitBtn").prop("disabled", true);
+                    });
+                this.on("queuecomplete",
+                    function(file) {
+                        $("#SubmitBtn").prop("disabled", false);
+                    });
+                this.on("successmultiple",
+                    function(file, response) {
+                        if (response.status === "Success") {
+                            $("#id_episodefilename").val(response.data);
+                        } else {
+                            swal("Error", "!عملیات با خطا مواجه شد .", "error");
+                        }
+                    });
+                this.on("maxfilesreached",
+                    function(file) {
+                        this.removeEventListeners();
+                    });
+            }
+        }
+    </script>
+{% endblock %}

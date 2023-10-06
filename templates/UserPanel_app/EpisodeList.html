@@ -1,0 +1,66 @@
+{% extends "mainTemplate.html" %}
+
+{% block title %}
+   مدیریت قسمت ها
+{% endblock title %}
+
+{% block content %}
+    <div class="container">
+    <nav aria-label="breadcrumb">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">تاپ لرن</a></li>
+            <li class="breadcrumb-item active" aria-current="page">مدیریت قسمت ها</li>
+        </ul>
+    </nav>
+</div>
+
+<main>
+    <div class="container">
+        <div class="user-account">
+            <div class="row">
+                <div class="col-md-3 col-sm-4 col-xs-12">
+                    {% include 'Partials/sidebar.html' %}
+                </div>
+                <div class="col-md-9 col-sm-8 col-xs-12">
+                    <section class="user-account-content">
+                        <header><h1> مدیریت قسمت ها </h1></header>
+                        <a class="btn btn-success" href="{% url 'userpanel:AddEpisode' course_id=course.id %}">افزودن قسمت جدید</a>
+                        <div class="inner form-layer">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>عنوان</th>
+                                        <th>زمان</th>
+                                        <th>وضعیت</th>
+                                        <th>دستورات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for episode in course.episodes.all %}
+                                        <tr>
+                                            <td>
+                                                {{ episode.episodeTitle }}
+                                            </td>
+                                            <td>{{ episode.episodeTime }}</td>
+                                            <td>
+                                                {% if episode.is_free %}
+                                                    <span class="success">رایگان</span>
+                                                {% else %}
+                                                    <span class="info">نقدی</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-info btn-block" href="{% url 'course:download_episodes' episode_id=episode.id %}">دانلود</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
