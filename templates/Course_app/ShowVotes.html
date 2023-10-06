@@ -1,0 +1,14 @@
+{% if user.is_authenticated and is_show_likes %}
+    <div class="row">
+        <p>
+            <a class="btn btn-success" onclick="vote('True')">
+                <i class="zmdi zmdi-thumb-up"></i>
+                می پسندم({{ like_count }})
+            </a>
+            <a class="btn btn-danger" onclick="vote('False')">
+                <i class="zmdi zmdi-thumb-down"></i>
+                نمی پسندم({{ dislike_count }})
+            </a>
+        </p>
+    </div> 
+{% endif %}

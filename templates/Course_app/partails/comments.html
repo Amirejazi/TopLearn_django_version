@@ -1,0 +1,34 @@
+<section class="user-comments">
+    <header><h3> نظرات کاربران </h3></header>
+    <div class="inner">
+        {% if user.is_authenticated %}
+            <form action="{% url 'course:CreateComment' %}"
+                  data-ajax="true"
+                  data-ajax-method="post"
+                  data-ajax-update="#listComment"
+                  data-ajax-mode="replace"
+                  data-ajax-success="Success">
+                {% csrf_token %}
+                <input type="hidden" name="comment_course_id" value="{{ course.id }}"/>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                                            <textarea class="form-control" id="comment_text" name="comment_text"
+                                                      placeholder="متن نظر"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-xs-12">
+                        <button type="submit" class="btn btn-success"> ثبت دیدگاه</button>
+                    </div>
+                </div>
+            </form>
+        {% else %}
+            <div class="alert alert-danger">
+                جهت درج نظر باید وارد سایت شوید
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="comment-list" id="listComment">
+    </div>
+</section>

@@ -29,153 +29,64 @@
                         {% autoescape off %}
                             {{ course.description }}
                         {% endautoescape %}
+                        <div style="margin:10px">
+                            {% if course.demoFileName != None and active_demo %}
+                                <video style="width:100%; height:100%;" controls
+                                       poster="{{ media_url }}{{ course.courseImageName }}">
+                                    <source src="{{ media_url }}{{ course.demoFileName }}" type="video/mp4"/>
+                                    <source src="{{ media_url }}{{ course.demoFileName }}" type="video/ogg"/>
+                                    <source src="{{ media_url }}{{ course.demoFileName }}" type="video/webm"/>
+                                </video>
+                            {% endif %}
+                        </div>
+                        <div id="vote">
+                        </div>
+                        {% if not is_user_in_course %}
+                            <div class="alert alert-info">
+                                <p>بعد از ثبت نام در این دوره و تایید فاکتور لینک های دانلود برای شما فعال خواهند شد</p>
+                            </div>
+                        {% endif %}
+
+                        {% if ep != None %}
+                            <h2>{{ ep.episodeTitle }}</h2>
+                            <video style="width:100%; height:100%" controls>
+                                <source src="{{ media_url }}{{ ep.episodefilename }}"/>
+                            </video>
+                        {% endif %}
 
                         <h2> سرفصل های این دوره : </h2>
                         <ul>
                             {% for episode in course.episodes.all %}
                                 <li>
-                                <h3> {{ episode.episodeTitle }} </h3>
-                                    {% if episode.is_free %}
-                                    <i> رایگان </i>
+                                    {% if episode.is_free or is_user_in_course %}
+                                        <h3>
+                                            <a href="{% url 'course:download_episodes' episode_id=episode.id %}">
+                                                {{ episode.episodeTitle }}
+                                            </a>
+                                        </h3>
+                                        <a href="{% url 'course:download_episodes' episode_id=episode.id %}"
+                                           class="download_active_btn"><i class="zmdi zmdi-download"></i></a>
                                     {% else %}
-                                    <i> نقدی</i>
+                                        <h3>{{ episode.episodeTitle }}</h3>
+                                        <a class="download_notactive_btn"><i style="color: #716d65" class="zmdi zmdi-download"></i></a>
+                                    {% endif %}
+                                    {% if user.is_authenticated %}
+                                        {% if episode.is_free or is_user_in_course %}
+                                            <a href="/course/show_course/{{ course.id }}?episode={{ episode.id }}" class="download_active_btn"><i
+                                                    class="zmdi zmdi-play"></i></a>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if episode.is_free %}
+                                        <i> رایگان </i>
+                                    {% else %}
+                                        <i> نقدی</i>
                                     {% endif %}
                                     <span>{{ episode.episodeTime }} </span>
-                            </li>
+                                </li>
                             {% endfor %}
                         </ul>
                     </section>
-
-                    <section class="user-comments">
-                        <header><h3> نظرات کاربران </h3></header>
-                        <div class="inner">
-                            <form>
-                                <div class="row">
-                                    <div class="col-md-4 col-sm-12 col-xs-12">
-                                        <div class="form-group">
-                                            <input type="text" class="form-control" placeholder="نام و نام خانوادگی">
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="text" class="form-control" placeholder="ایمیل">
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="text" class="form-control" placeholder="شماره تماس">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8 col-sm-12 col-xs-12">
-                                        <div class="form-group">
-                                            <textarea class="form-control" placeholder="متن نظر"></textarea>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-8 col-sm-7 col-xs-7">
-                                                <div class="form-group">
-                                                    <input type="text" class="form-control" placeholder="کد امنیتی">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 col-sm-5 col-xs-5">
-                                                <img src="images/captcha.jpg">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12">
-                                        <button type="submit" class="btn btn-success"> ثبت دیدگاه</button>
-                                    </div>
-                                </div>
-                            </form>
-
-                            <div class="comment-list">
-                                <!-- row -->
-                                <div class="comment-row">
-                                    <img src="images/pic/avatar.jpg">
-                                    <div class="left-col">
-                                        <h3> میترا رحیمی </h3>
-                                        <span>12/03/1397</span>
-                                        <p>
-                                            لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از
-                                            طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که
-                                            لازم است
-                                        </p>
-                                    </div>
-                                </div>
-                                <!-- /row -->
-                                <!-- row -->
-                                <div class="comment-row">
-                                    <img src="images/pic/avatar.jpg">
-                                    <div class="left-col">
-                                        <h3> میترا رحیمی </h3>
-                                        <span>12/03/1397</span>
-                                        <p>
-                                            لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از
-                                            طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که
-                                            لازم است
-                                        </p>
-                                    </div>
-                                </div>
-                                <!-- /row -->
-                                <!-- row -->
-                                <div class="comment-row">
-                                    <img src="images/pic/avatar.jpg">
-                                    <div class="left-col">
-                                        <h3> میترا رحیمی </h3>
-                                        <span>12/03/1397</span>
-                                        <p>
-                                            لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از
-                                            طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که
-                                            لازم است
-                                        </p>
-                                    </div>
-                                </div>
-                                <!-- /row -->
-                                <!-- row -->
-                                <div class="comment-row">
-                                    <img src="images/pic/avatar.jpg">
-                                    <div class="left-col">
-                                        <h3> میترا رحیمی </h3>
-                                        <span>12/03/1397</span>
-                                        <p>
-                                            لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از
-                                            طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که
-                                            لازم است
-                                        </p>
-                                    </div>
-                                </div>
-                                <!-- /row -->
-                                <!-- row -->
-                                <div class="comment-row">
-                                    <img src="images/pic/avatar.jpg">
-                                    <div class="left-col">
-                                        <h3> میترا رحیمی </h3>
-                                        <span>12/03/1397</span>
-                                        <p>
-                                            لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از
-                                            طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که
-                                            لازم است
-                                        </p>
-                                    </div>
-                                </div>
-                                <!-- /row -->
-
-                                <nav aria-label="Page navigation">
-                                    <ul class="pagination justify-content-center">
-                                        <li class="page-item">
-                                            <a class="page-link" href="#" aria-label="Previous">
-                                                <span aria-hidden="true"><i class="zmdi zmdi-chevron-right"></i></span>
-                                            </a>
-                                        </li>
-                                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                        <li class="page-item">
-                                            <a class="page-link" href="#" aria-label="Next">
-                                                <span aria-hidden="true"><i class="zmdi zmdi-chevron-left"></i></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </nav>
-
-                            </div>
-                        </div>
-                    </section>
+                    {% include 'Course_app/partails/comments.html' %}
                 </div>
 
                 <aside class="col-md-4 col-sm-12 col-xs-12 pull-right">
@@ -183,7 +94,11 @@
                         <ul>
                             <li>
                                 <span> مدت دوره </span>
-                                <i> {{ course.total_time }} </i>
+                                {% if course.total_time != None %}
+                                    <i> {{ course.total_time }} </i>
+                                {% else %}
+                                    0
+                                {% endif %}
                             </li>
                             <li>
                                 <span> تعداد ویدیوها </span>
@@ -191,17 +106,21 @@
                             </li>
                             <li>
                                 <span> تعداد دانشجوها </span>
-                                <i> 52 نفر </i>
+                                <i> {{ course.user.count }} نفر </i>
                             </li>
                         </ul>
-                        {% if course.price != 0 %}
-                        <a href="{% url 'course:BuyCourses' course_id=course.id %}"> شرکت در دوره :
-                            {{ course.price | intcomma }} تومان </a>
+                        {% if course.price != 0 and not is_user_in_course %}
+                            <a href="{% url 'course:BuyCourses' course_id=course.id %}"> شرکت در دوره :
+                                {{ course.price | intcomma }} تومان </a>
                         {% endif %}
                     </div>
 
                     <article class="teacher-info">
-                        <img src="{{ media_url }}{{ course.teacher.image_name }}">
+                        {% if course.teacher.image_name %}
+                            <img src="{{ media_url }}{{ course.teacher.image_name }}">
+                        {% else %}
+                            <img src="{{ media_url }}/images/UserAvatar/Default.jpg">
+                        {% endif %}
                         <h2> مدرس : {{ course.teacher.username }} </h2>
                     </article>
 
@@ -211,7 +130,7 @@
                             <li>سطح دوره:{{ course.courseLevel.levelTitle }}</li>
                             <li>وضعیت دوره:{{ course.courseStatus.statusTitle }}</li>
                             {% if course.price != 0 %}
-                            <li>قیمت : {{ course.price | intcomma }} تومان</li>
+                                <li>قیمت : {{ course.price | intcomma }} تومان</li>
                             {% else %}
                                 <li>قیمت : رایگان</li>
                             {% endif %}
@@ -227,6 +146,9 @@
                         <a href=""><i class="zmdi zmdi-twitter"></i></a>
                         <a href=""><i class="zmdi zmdi-linkedin"></i></a>
                     </div>
+                    <div style="margin-bottom:10px;">
+                        <a class="btn btn-block btn-info" href="/forum?course_id={{ course.id }}">پرسش و پاسخ </a>
+                    </div>
                     <div class="tags-layer">
                         {% for tag in tags %}
                             <a href="/course/course_list?filter={{ tag }}"> {{ tag }} </a>
@@ -237,4 +159,32 @@
             </div>
         </section>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/jquery.unobtrusive-ajax.min.js' %}"></script>
+    <script>
+        function Success() {
+            $("#comment_text").val("");
+        }
+
+        $(function () {
+            $("#listComment").load("/course/show_comments/" + {{ course.id }});
+        });
+
+        function pageComment(pageid) {
+            $("#listComment").load("/course/show_comments/" + {{ course.id }} +"?pageId=" + pageid);
+        }
+
+        $(function () {
+            $("#vote").load("/course/show_votes/" + {{ course.id }});
+        });
+
+        function vote(vote) {
+            $("#vote").fadeOut('slow');
+            $("#vote").load("/course/add_vote/" + {{ course.id }} +"?vote=" + vote);
+            $("#vote").fadeIn('slow');
+
+        }
+    </script>
 {% endblock %}

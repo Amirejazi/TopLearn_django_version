@@ -1,9 +1,10 @@
+import mimetypes
 from io import BytesIO
+from urllib.parse import quote
 from PIL import Image
 import os
-
 from django.db.models import Q, Sum, F
-
+from django.http import HttpResponse, HttpResponseNotFound
 from TopLearn.settings import MEDIA_ROOT
 from django.apps import apps
 
@@ -16,7 +17,6 @@ def compact_and_resize_image(image_path, new_width):
     # compressed_image = BytesIO()
 
     format = os.path.splitext(str(image_path))[1]
-    image.save(os.path.basename(str(image_path)), quality=100)
 
     # Resize the image
     aspect_ratio = float(image.size[1]) / float(image.size[0])
@@ -93,3 +93,15 @@ def add_order(user, course):
             price=course.price
         )
         return order.id
+
+
+def downloadFile(file_path):
+    if os.path.exists(file_path):
+        file_type = mimetypes.guess_type(file_path)
+        with open(file_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type=f"application/{file_type}")
+            file_name_encoded = quote(os.path.basename(file_path))
+            response['Content-Disposition'] = f'attachment; filename={file_name_encoded}'
+            return response
+    else:
+        return HttpResponseNotFound('فایل مورد نظر یافت نشد')

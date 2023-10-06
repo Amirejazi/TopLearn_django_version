@@ -1,6 +1,5 @@
 import os
 from uuid import uuid4
-
 import jdatetime
 from admin_decorators import short_description
 from ckeditor_uploader.fields import RichTextUploadingField
@@ -91,12 +90,12 @@ class Course(models.Model):
     subGroup = models.ForeignKey(CourseGroup, null=True, blank=True, on_delete=models.CASCADE, related_name='courses_of_subgroup', verbose_name='گروه فرعی')
     courseStatus = models.ForeignKey(CourseStatus, on_delete=models.CASCADE, related_name='courses_of_status', verbose_name='وضعیت دوره')
     courseLevel = models.ForeignKey(CourseLevel, on_delete=models.CASCADE, related_name='courses_of_level', verbose_name='سطح دوره')
-    teacher = models.ForeignKey(User, on_delete=models.CASCADE, related_name='courses_of_user', verbose_name='مدرس')
-    user = models.ManyToManyField(User, related_name='users_in_course', verbose_name='کاربرانی که دوره رو تهیه کردن')
+    teacher = models.ForeignKey(User, on_delete=models.CASCADE, related_name='courses_of_teacher', verbose_name='مدرس')
+    user = models.ManyToManyField(User, related_name='courses_of_user', verbose_name='کاربرانی که دوره رو تهیه کردن')
     is_active = models.BooleanField(default=False, verbose_name='وضعیت (فعال/غیرفعال)')
 
     def __str__(self):
-        return self.courseTitle + ' ' + str(self.teacher)
+        return f"نام دوره: {self.courseTitle}"
 
     @property
     def base_courseImageName(self):
@@ -112,6 +111,9 @@ class Course(models.Model):
         return jdatetime_obj.strftime('%Y/%m/%d')
 
     class Meta:
+        permissions = [
+            ("master_panel", "پنل مدرس")
+        ]
         indexes = [
             models.Index(fields=['-createDate']),
             models.Index(fields=['-updateDate']),
@@ -173,3 +175,38 @@ class Episode(models.Model):
         verbose_name_plural = 'قسمت ها'
         db_table = 't_episodes'
 
+
+class CourseComment(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='comments', verbose_name='دوره')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments', verbose_name='کاربر ثبت کننده نظر')
+    comment = models.TextField(max_length=700, verbose_name='متن نظر')
+    created_date = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت نظر')
+    is_admin_read = models.BooleanField(default=False, verbose_name='دیده شدن توسط ادمین')
+
+    def __str__(self):
+        return f"نظر کاربر {self.user.username} برای دوره {self.course.courseTitle}"
+
+    def get_created_date_shamsi(self):
+        jdatetime_obj = jdatetime.datetime.fromgregorian(datetime=self.created_date)
+        return jdatetime_obj.strftime('%Y/%m/%d')
+
+    class Meta:
+        ordering = ['-created_date']
+        verbose_name = 'نظر'
+        verbose_name_plural = 'نظر ها'
+        db_table = 't_comments'
+
+
+class CourseVote(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='vote', verbose_name='دوره')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='vote', verbose_name='کاربر ثبت کننده لایک')
+    vote = models.BooleanField(default=False, verbose_name='وضعیت پسندیدن')
+    vote_time = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت')
+
+    def __str__(self):
+        return f"وضعیت پسندیدن کاربر {self.user.username} برای دوره {self.course.courseTitle}"
+
+    class Meta:
+        verbose_name = 'پسند'
+        verbose_name_plural = 'پسند ها'
+        db_table = 't_votes'
